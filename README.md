@@ -38,6 +38,8 @@ All icons on buttons were downloaded from [Icons8](https://icons8.com).
 ## Changelog
 
 <pre>
+2.3.1     2022-06-27     New features/improvements:
+                           - management of Tempo custom attribute "Commessa"
 2.2.0     2017-10-31     New features/improvements:
                            - Log work using actual start time (Thanks to Adam Conway)
                            - Use Jira's hour/day configuration when presenting time

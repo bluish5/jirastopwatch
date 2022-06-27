@@ -13,6 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 **************************************************************************/
+using StopWatch.Jira;
 using StopWatch.Logging;
 using System;
 using System.Collections.Generic;
@@ -256,6 +257,9 @@ namespace StopWatch
         #region private methods
         private void AuthenticateJira(string username, string apiToken)
         {
+            TempoClient.Token = this.settings.TempoApiToken;
+            TempoClient.AccountId = this.settings.AccountId;
+
             Task.Factory.StartNew(
                 () =>
                 {

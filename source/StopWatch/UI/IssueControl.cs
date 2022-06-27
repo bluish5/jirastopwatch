@@ -13,6 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 **************************************************************************/
+using StopWatch.Jira;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -60,6 +61,7 @@ namespace StopWatch
         }
 
 
+        public string SubprojectKey { get; set; }
         public string Comment { get; set; }
         public EstimateUpdateMethods EstimateUpdateMethod { get; set; }
         public string EstimateUpdateValue { get; set; }
@@ -576,21 +578,23 @@ namespace StopWatch
 
         public void PostAndReset()
         {
-            using (var worklogForm = new WorklogForm(WatchTimer.GetInitialStartTime(), WatchTimer.TimeElapsedNearestMinute, Comment, EstimateUpdateMethod, EstimateUpdateValue))
+            using (var worklogForm = new WorklogForm(WatchTimer.GetInitialStartTime(), WatchTimer.TimeElapsedNearestMinute, SubprojectKey, Comment, EstimateUpdateMethod, EstimateUpdateValue, this.jiraClient))
             {
                 UpdateRemainingEstimate(worklogForm);
                 var formResult = worklogForm.ShowDialog(this);
                 if (formResult == DialogResult.OK)
                 {
+                    SubprojectKey = worklogForm.SubprojectKey.Trim();
                     Comment = worklogForm.Comment.Trim();
                     EstimateUpdateMethod = worklogForm.estimateUpdateMethod;
                     EstimateUpdateValue = worklogForm.EstimateValue;
 
-                    PostAndReset(cbJira.Text, worklogForm.InitialStartTime, WatchTimer.TimeElapsedNearestMinute, Comment, EstimateUpdateMethod, EstimateUpdateValue);
+                    PostAndReset(cbJira.Text, worklogForm.InitialStartTime, WatchTimer.TimeElapsedNearestMinute, Comment, EstimateUpdateMethod, EstimateUpdateValue, SubprojectKey);
                 }
                 else if (formResult == DialogResult.Yes)
                 {
-                    Comment = string.Format("{0}:{1}{2}", DateTime.Now.ToString("g"), Environment.NewLine, worklogForm.Comment.Trim());
+                    SubprojectKey = worklogForm.SubprojectKey.Trim();
+                    Comment = worklogForm.Comment.Trim();
                     EstimateUpdateMethod = worklogForm.estimateUpdateMethod;
                     EstimateUpdateValue = worklogForm.EstimateValue;
                     UpdateOutput();
@@ -620,7 +624,7 @@ namespace StopWatch
 
 
         #region private methods
-        private void PostAndReset(string key, DateTimeOffset startTime, TimeSpan timeElapsed, string comment, EstimateUpdateMethods estimateUpdateMethod, string estimateUpdateValue)
+        private void PostAndReset(string key, DateTimeOffset startTime, TimeSpan timeElapsed, string comment, EstimateUpdateMethods estimateUpdateMethod, string estimateUpdateValue, string subprojectKey)
         {
             Task.Factory.StartNew(
                 () =>
@@ -645,7 +649,10 @@ namespace StopWatch
 
                     // Now post the WorkLog with timeElapsed - and comment unless it was reset
                     if (postSuccesful)
-                        postSuccesful = jiraClient.PostWorklog(key, startTime, timeElapsed, comment, estimateUpdateMethod, estimateUpdateValue);
+                        if(String.IsNullOrEmpty(this.settings.TempoApiToken))
+                            postSuccesful = jiraClient.PostWorklog(key, startTime, timeElapsed, comment, estimateUpdateMethod, estimateUpdateValue);
+                        else
+                            postSuccesful = TempoClient.PostWorklog(key, startTime, timeElapsed, comment, estimateUpdateMethod, estimateUpdateValue, subprojectKey);
 
                     if (postSuccesful)
                     {

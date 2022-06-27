@@ -14,7 +14,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 **************************************************************************/
 using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace StopWatch
@@ -85,11 +87,48 @@ namespace StopWatch
                 RemainingEstimateUpdated();
             }
         }
+
+        public IEnumerable<Issue> AvailableIssues
+        {
+            set
+            {
+                cbSubproject.Items.Clear();
+                foreach (var issue in value)
+                    cbSubproject.Items.Add(new CBIssueItem(issue.Key, issue.Fields.Summary));
+            }
+        }
+
+        public string SubprojectKey {
+            get
+            {
+                return cbSubproject.Text;
+            }
+        }
         #endregion
 
+        #region private members
+        private JiraClient jiraClient;
+        private int keyWidth;
+        private ComboTextBoxEvents cbJiraTbEvents;
+        #endregion
+
+        #region private classes
+        // content item for the combo box
+        private class CBIssueItem
+        {
+            public string Key { get; set; }
+            public string Summary { get; set; }
+
+            public CBIssueItem(string key, string summary)
+            {
+                Key = key;
+                Summary = summary;
+            }
+        }
+        #endregion
 
         #region public methods
-        public WorklogForm(DateTimeOffset startTime, TimeSpan TimeElapsed, string comment, EstimateUpdateMethods estimateUpdateMethod, string estimateUpdateValue)
+        public WorklogForm(DateTimeOffset startTime, TimeSpan TimeElapsed, string subprojectKey, string comment, EstimateUpdateMethods estimateUpdateMethod, string estimateUpdateValue, JiraClient jiraClient)
         {            
             this.TimeElapsed = TimeElapsed;
             DateTimeOffset initialStartTime;
@@ -101,9 +140,13 @@ namespace StopWatch
                 initialStartTime = startTime;
             }
             InitializeComponent();
+            if (!String.IsNullOrEmpty(subprojectKey))
+            {
+                cbSubproject.Text = subprojectKey;
+            }
             if (!String.IsNullOrEmpty(comment))
             {
-                tbComment.Text = String.Format("{0}{0}{1}", Environment.NewLine, comment);
+                tbComment.Text = comment;
                 tbComment.SelectionStart = 0;
             }
 
@@ -129,11 +172,41 @@ namespace StopWatch
                     tbReduceBy.Text = estimateUpdateValue;
                     break;
             }
+            this.jiraClient = jiraClient;
+
+            cbJiraTbEvents = new ComboTextBoxEvents(cbSubproject);
+            cbJiraTbEvents.Paste += cbJiraTbEvents_Paste;
+        }
+        #endregion
+
+        #region private methods
+        private void LoadIssues()
+        {
+            string jql = "issuetype = Commessa AND statusCategory = 4 ORDER BY key ASC, created DESC";
+
+            Task.Factory.StartNew(
+                () =>
+                {
+                    List<Issue> availableIssues = jiraClient.GetIssuesByJQL(jql).Issues;
+
+                    if (availableIssues == null)
+                        return;
+
+                    this.InvokeIfRequired(
+                        () =>
+                        {
+                            AvailableIssues = availableIssues;
+                            cbSubproject.DropDownHeight = 120;
+                            cbSubproject.Invalidate();
+                        }
+                    );
+                }
+            );
         }
         #endregion
 
         #region private fields
-        
+
         /// <summary>
         /// Update method for the estimate
         /// </summary>
@@ -276,7 +349,83 @@ namespace StopWatch
                 return;
             }            
         }
-        #endregion       
+
+        void cbJira_MeasureItem(object sender, MeasureItemEventArgs e)
+        {
+            if (e.Index == 0)
+                keyWidth = 0;
+            CBIssueItem item = (CBIssueItem)cbSubproject.Items[e.Index];
+            Font font = new Font(cbSubproject.Font.FontFamily, cbSubproject.Font.Size * 0.8f, cbSubproject.Font.Style);
+            Size size = TextRenderer.MeasureText(e.Graphics, item.Key, font);
+            e.ItemHeight = size.Height;
+            if (keyWidth < size.Width)
+                keyWidth = size.Width;
+        }
+
+
+        void cbJira_DrawItem(object sender, DrawItemEventArgs e)
+        {
+            // Draw the default background
+            e.DrawBackground();
+
+            CBIssueItem item = (CBIssueItem)cbSubproject.Items[e.Index];
+
+            // Create rectangles for the columns to display
+            Rectangle r1 = e.Bounds;
+            Rectangle r2 = e.Bounds;
+
+            r1.Width = keyWidth;
+
+            r2.X = r1.Width + 5;
+            r2.Width = 500 - keyWidth;
+
+            Font font = new Font(e.Font.FontFamily, e.Font.Size * 0.8f, e.Font.Style);
+
+            // Draw the text on the first column
+            using (SolidBrush sb = new SolidBrush(e.ForeColor))
+                e.Graphics.DrawString(item.Key, font, sb, r1);
+
+            // Draw a line to isolate the columns 
+            using (Pen p = new Pen(Color.Black))
+                e.Graphics.DrawLine(p, r1.Right, 0, r1.Right, r1.Bottom);
+
+            // Draw the text on the second column
+            using (SolidBrush sb = new SolidBrush(e.ForeColor))
+                e.Graphics.DrawString(item.Summary, font, sb, r2);
+
+            // Draw a line to isolate the columns 
+            using (Pen p = new Pen(Color.Black))
+                e.Graphics.DrawLine(p, r1.Right, 0, r1.Right, 140);
+
+        }
+
+
+        private void cbJira_DropDown(object sender, EventArgs e)
+        {
+            LoadIssues();
+        }
+
+
+        private void cbJiraTbEvents_Paste(object sender, EventArgs e)
+        {
+            PasteKeyFromClipboard();
+        }
+
+        public void PasteKeyFromClipboard()
+        {
+            if (Clipboard.ContainsText())
+            {
+                cbSubproject.Text = JiraKeyHelpers.ParseUrlToKey(Clipboard.GetText());
+            }
+        }
+
+        public void CopyKeyToClipboard()
+        {
+            if (string.IsNullOrEmpty(cbSubproject.Text))
+                return;
+            Clipboard.SetText(cbSubproject.Text);
+        }
+        #endregion
 
         #region private utility methods
 

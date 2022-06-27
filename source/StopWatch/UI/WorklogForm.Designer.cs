@@ -60,13 +60,15 @@ namespace StopWatch
             this.startDatePicker = new System.Windows.Forms.DateTimePicker();
             this.label1 = new System.Windows.Forms.Label();
             this.startTimePicker = new System.Windows.Forms.DateTimePicker();
+            this.lblSubproject = new System.Windows.Forms.Label();
+            this.cbSubproject = new System.Windows.Forms.ComboBox();
             this.gbRemainingEstimate.SuspendLayout();
             this.SuspendLayout();
             // 
             // lblComment
             // 
             this.lblComment.AutoSize = true;
-            this.lblComment.Location = new System.Drawing.Point(9, 7);
+            this.lblComment.Location = new System.Drawing.Point(9, 51);
             this.lblComment.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblComment.Name = "lblComment";
             this.lblComment.Size = new System.Drawing.Size(206, 13);
@@ -75,7 +77,7 @@ namespace StopWatch
             // 
             // tbComment
             // 
-            this.tbComment.Location = new System.Drawing.Point(11, 24);
+            this.tbComment.Location = new System.Drawing.Point(11, 68);
             this.tbComment.Margin = new System.Windows.Forms.Padding(2);
             this.tbComment.Multiline = true;
             this.tbComment.Name = "tbComment";
@@ -87,7 +89,7 @@ namespace StopWatch
             // btnCancel
             // 
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(254, 336);
+            this.btnCancel.Location = new System.Drawing.Point(254, 380);
             this.btnCancel.Margin = new System.Windows.Forms.Padding(2);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(56, 23);
@@ -99,7 +101,7 @@ namespace StopWatch
             // 
             this.btnOk.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.btnOk.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnOk.Location = new System.Drawing.Point(193, 336);
+            this.btnOk.Location = new System.Drawing.Point(193, 380);
             this.btnOk.Margin = new System.Windows.Forms.Padding(2);
             this.btnOk.Name = "btnOk";
             this.btnOk.Size = new System.Drawing.Size(56, 23);
@@ -111,7 +113,7 @@ namespace StopWatch
             // lblInfo
             // 
             this.lblInfo.AutoSize = true;
-            this.lblInfo.Location = new System.Drawing.Point(11, 316);
+            this.lblInfo.Location = new System.Drawing.Point(11, 360);
             this.lblInfo.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblInfo.Name = "lblInfo";
             this.lblInfo.Size = new System.Drawing.Size(137, 13);
@@ -121,7 +123,7 @@ namespace StopWatch
             // btnSave
             // 
             this.btnSave.DialogResult = System.Windows.Forms.DialogResult.Yes;
-            this.btnSave.Location = new System.Drawing.Point(11, 336);
+            this.btnSave.Location = new System.Drawing.Point(11, 380);
             this.btnSave.Margin = new System.Windows.Forms.Padding(2);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(83, 23);
@@ -151,7 +153,7 @@ namespace StopWatch
             this.gbRemainingEstimate.Controls.Add(this.rdEstimateAdjustSetTo);
             this.gbRemainingEstimate.Controls.Add(this.rdEstimateAdjustLeave);
             this.gbRemainingEstimate.Controls.Add(this.rdEstimateAdjustAuto);
-            this.gbRemainingEstimate.Location = new System.Drawing.Point(14, 208);
+            this.gbRemainingEstimate.Location = new System.Drawing.Point(14, 252);
             this.gbRemainingEstimate.Name = "gbRemainingEstimate";
             this.gbRemainingEstimate.Size = new System.Drawing.Size(299, 102);
             this.gbRemainingEstimate.TabIndex = 2;
@@ -220,7 +222,7 @@ namespace StopWatch
             // 
             this.startDatePicker.AccessibleDescription = "Start Date";
             this.startDatePicker.AccessibleName = "StartDate";
-            this.startDatePicker.Location = new System.Drawing.Point(124, 176);
+            this.startDatePicker.Location = new System.Drawing.Point(124, 220);
             this.startDatePicker.Name = "startDatePicker";
             this.startDatePicker.ShowUpDown = true;
             this.startDatePicker.Size = new System.Drawing.Size(115, 20);
@@ -229,7 +231,7 @@ namespace StopWatch
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(19, 182);
+            this.label1.Location = new System.Drawing.Point(19, 226);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(55, 13);
             this.label1.TabIndex = 12;
@@ -241,11 +243,39 @@ namespace StopWatch
             this.startTimePicker.AccessibleName = "StartTime";
             this.startTimePicker.CustomFormat = "HH:mm";
             this.startTimePicker.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
-            this.startTimePicker.Location = new System.Drawing.Point(254, 176);
+            this.startTimePicker.Location = new System.Drawing.Point(254, 220);
             this.startTimePicker.Name = "startTimePicker";
             this.startTimePicker.ShowUpDown = true;
             this.startTimePicker.Size = new System.Drawing.Size(59, 20);
             this.startTimePicker.TabIndex = 13;
+            // 
+            // lblSubproject
+            // 
+            this.lblSubproject.AutoSize = true;
+            this.lblSubproject.Location = new System.Drawing.Point(9, 18);
+            this.lblSubproject.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lblSubproject.Name = "lblSubproject";
+            this.lblSubproject.Size = new System.Drawing.Size(64, 13);
+            this.lblSubproject.TabIndex = 14;
+            this.lblSubproject.Text = "Sub-project:";
+            // 
+            // cbJira
+            // 
+            this.cbSubproject.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
+            this.cbSubproject.DisplayMember = "Key";
+            this.cbSubproject.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawVariable;
+            this.cbSubproject.DropDownHeight = 90;
+            this.cbSubproject.DropDownWidth = 488;
+            this.cbSubproject.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F);
+            this.cbSubproject.IntegralHeight = false;
+            this.cbSubproject.Location = new System.Drawing.Point(78, 10);
+            this.cbSubproject.Name = "cbJira";
+            this.cbSubproject.Size = new System.Drawing.Size(235, 28);
+            this.cbSubproject.TabIndex = 15;
+            this.cbSubproject.ValueMember = "Key";
+            this.cbSubproject.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.cbJira_DrawItem);
+            this.cbSubproject.DropDown += new System.EventHandler(this.cbJira_DropDown);
+            this.cbSubproject.MeasureItem += new System.Windows.Forms.MeasureItemEventHandler(this.cbJira_MeasureItem);
             // 
             // WorklogForm
             // 
@@ -253,7 +283,9 @@ namespace StopWatch
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
             this.CancelButton = this.btnCancel;
-            this.ClientSize = new System.Drawing.Size(321, 367);
+            this.ClientSize = new System.Drawing.Size(321, 414);
+            this.Controls.Add(this.cbSubproject);
+            this.Controls.Add(this.lblSubproject);
             this.Controls.Add(this.startTimePicker);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.startDatePicker);
@@ -294,5 +326,7 @@ namespace StopWatch
         private DateTimePicker startDatePicker;
         private Label label1;
         private DateTimePicker startTimePicker;
+        private Label lblSubproject;
+        private ComboBox cbSubproject;
     }
 }

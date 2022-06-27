@@ -42,7 +42,9 @@ namespace StopWatch
 
             tbJiraBaseUrl.Text = this.settings.JiraBaseUrl;
             tbUsername.Text = settings.Username;
-            tbApiToken.Text = settings.ApiToken;
+            tbJiraApiToken.Text = settings.ApiToken;
+            tbAccountId.Text = settings.AccountId;
+            tbTempoApiToken.Text = settings.TempoApiToken;
 
             cbAlwaysOnTop.Checked = this.settings.AlwaysOnTop;
             cbMinimizeToTray.Checked = this.settings.MinimizeToTray;
@@ -95,7 +97,9 @@ namespace StopWatch
             {
                 this.settings.JiraBaseUrl = tbJiraBaseUrl.Text;
                 settings.Username = tbUsername.Text;
-                settings.ApiToken = tbApiToken.Text;
+                settings.ApiToken = tbJiraApiToken.Text;
+                settings.AccountId = tbAccountId.Text;
+                settings.TempoApiToken = tbTempoApiToken.Text;
 
                 this.settings.AlwaysOnTop = cbAlwaysOnTop.Checked;
                 this.settings.MinimizeToTray = cbMinimizeToTray.Checked;
@@ -131,6 +135,11 @@ namespace StopWatch
         private void lblOpenAPITokensPage_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             Process.Start("https://id.atlassian.com/manage/api-tokens");
+        }
+
+        private void lblOpenTempoAPITokensPage_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Process.Start("https://tesigroup.atlassian.net/plugins/servlet/ac/io.tempo.jira/tempo-app#!/configuration/api-integration");
         }
     }
 }

@@ -60,6 +60,8 @@ namespace StopWatch
 
         public string Username { get; set; }
         public string ApiToken { get; set; }
+        public string AccountId { get; set; }
+        public string TempoApiToken { get; set; }
         public bool FirstRun { get; set; }
 
         public int CurrentFilter { get; set; }
@@ -119,10 +121,15 @@ namespace StopWatch
             this.MinimizeToTray = Properties.Settings.Default.MinimizeToTray;
             this.IssueCount = Properties.Settings.Default.IssueCount;
             this.Username = Properties.Settings.Default.Username;
+            this.AccountId = Properties.Settings.Default.AccountId;
             if (Properties.Settings.Default.ApiToken != "")
                 this.ApiToken = DPAPI.Decrypt(Properties.Settings.Default.ApiToken);
             else
                 this.ApiToken = "";
+            if (Properties.Settings.Default.TempoApiToken != "")
+                this.TempoApiToken = DPAPI.Decrypt(Properties.Settings.Default.TempoApiToken);
+            else
+                this.TempoApiToken = "";
             this.FirstRun = Properties.Settings.Default.FirstRun;
             this.SaveTimerState = (SaveTimerSetting)Properties.Settings.Default.SaveTimerState;
             this.PauseOnSessionLock = (PauseAndResumeSetting)Properties.Settings.Default.PauseOnSessionLock;
@@ -154,10 +161,15 @@ namespace StopWatch
                 Properties.Settings.Default.IncludeProjectName = this.IncludeProjectName;
 
                 Properties.Settings.Default.Username = this.Username;
+                Properties.Settings.Default.AccountId = this.AccountId;
                 if (this.ApiToken != "")
                     Properties.Settings.Default.ApiToken = DPAPI.Encrypt(this.ApiToken);
                 else
                     Properties.Settings.Default.ApiToken = "";
+                if (this.TempoApiToken != "")
+                    Properties.Settings.Default.TempoApiToken = DPAPI.Encrypt(this.TempoApiToken);
+                else
+                    Properties.Settings.Default.TempoApiToken = "";
 
                 Properties.Settings.Default.FirstRun = this.FirstRun;
                 Properties.Settings.Default.SaveTimerState = (int)this.SaveTimerState;

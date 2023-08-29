@@ -649,10 +649,21 @@ namespace StopWatch
 
                     // Now post the WorkLog with timeElapsed - and comment unless it was reset
                     if (postSuccesful)
-                        if(String.IsNullOrEmpty(this.settings.TempoApiToken))
+                    {
+                        if (String.IsNullOrEmpty(this.settings.TempoApiToken))
+                        {
                             postSuccesful = jiraClient.PostWorklog(key, startTime, timeElapsed, comment, estimateUpdateMethod, estimateUpdateValue);
+                        }
                         else
-                            postSuccesful = TempoClient.PostWorklog(key, startTime, timeElapsed, comment, estimateUpdateMethod, estimateUpdateValue, subprojectKey);
+                        {
+                            //get issue ID, because Tempo needs it, instead of issue key
+                            int? issueId = jiraClient.GetIssueIdFromIssueKey(key);
+                            if (issueId.HasValue)
+                            {
+                                postSuccesful = TempoClient.PostWorklog(issueId.Value, startTime, timeElapsed, comment, estimateUpdateMethod, estimateUpdateValue, subprojectKey);
+                            }
+                        }
+                    }
 
                     if (postSuccesful)
                     {

@@ -18,6 +18,7 @@ namespace StopWatch
     public class Issue
     {
         public string Key { get; set; }
+        public int Id { get; set; }
         public IssueFields Fields { get; set; }
     }
 }
